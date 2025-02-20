@@ -8,6 +8,7 @@ paths:
     get:
       tags: ["item", "html"]
       operationId: page_item
+
       summary: Get an item's page
       description: Retrieves the individual item HTML page for a given item ID.
       parameters:
@@ -156,7 +157,6 @@ paths:
   # /search (search requests)
   # /forgot-password
   # /forgot-password/redirect (GET: the page you enter your new password on. POST: new password hash, authenticated with some token)
-
 
 
 components:
