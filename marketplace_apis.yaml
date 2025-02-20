@@ -1,0 +1,53 @@
+openapi: 3.1.0
+info:
+  title: Marketplace
+  description: |
+    This API allows posting, fetching, and purchasing of products from an authenticated user.
+  version: 0.0.1
+paths:
+  /item:
+    get:
+      summary: Get an item's page
+      description: Retrieves the individual item HTML page for a given item ID.
+      parameters:
+      - name: id
+        in: query
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        "200":
+          description: "Item ID exists, returns the HTML page for the given item"
+          content: {
+            "text/html": {
+              "schema": {
+                "$ref": "#/components/schemas/ItemModel"
+              }
+            }
+          }
+        "404":
+          description: "Item ID does not exist. Returns 404 page."
+
+components:
+  schemas:
+    ItemModel:
+      type: object
+      required:
+        - name
+        - description
+        - image_path
+        - price_pennies # Item price in pennies (to avoid floating point precision errors) 
+        - seller_reviews # Average seller reviews
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        image_path:
+          type: string
+        price_pennies:
+          type: integer
+          minimum: 20
+        seller_reviews:
+          type: number
+          format: float
