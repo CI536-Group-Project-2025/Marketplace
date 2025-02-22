@@ -8,7 +8,6 @@ paths:
     get:
       tags: ["item", "html"]
       operationId: page_item
-
       summary: Get an item's page
       description: Retrieves the individual item HTML page for a given item ID.
       parameters:
@@ -27,7 +26,6 @@ paths:
                   - "$ref": "#/components/schemas/ItemModel"
         "404":
           description: "Item ID does not exist. Returns 404 page."
-  paths:
   /catalogue:
     get:
       tags: ["item", "search"]
