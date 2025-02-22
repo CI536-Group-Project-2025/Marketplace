@@ -1,41 +1,41 @@
 openapi: 3.1.0
 info:
   title: Marketplace
-  description: |
-    This API allows posting, fetching, and purchasing of products from an authenticated user.
+  description: This API allows posting, fetching, and purchasing of products from an authenticated user.
   version: 0.0.1
 paths:
   /item:
     get:
+      tags: ["item", "html"]
+      operationId: get_item_page
       summary: Get an item's page
       description: Retrieves the individual item HTML page for a given item ID.
       parameters:
       - name: id
+        description: The unique ID of the item.
         in: query
         schema:
           type: integer
           minimum: 0
       responses:
         "200":
-          description: "Item ID exists, returns the HTML page for the given item"
-          content: {
-            "text/html": {
-              "schema": {
-                "$ref": "#/components/schemas/ItemModel"
-              }
-            }
-          }
+          description: Item ID exists, returns the HTML page for the given item
+          content: 
+            - "text/html":
+                - "schema":
+                  - "$ref": "#/components/schemas/ItemModel"
         "404":
           description: "Item ID does not exist. Returns 404 page."
 
 components:
   schemas:
     ItemModel:
+      description: Item information used to build out the Item page template
       type: object
       required:
         - name
         - description
-        - image_path
+        - id
         - price_pennies # Item price in pennies (to avoid floating point precision errors) 
         - seller_reviews # Average seller reviews
       properties:
@@ -43,11 +43,24 @@ components:
           type: string
         description:
           type: string
-        image_path:
-          type: string
+        id:
+          type: integer
+          minimum: 0
         price_pennies:
           type: integer
           minimum: 20
         seller_reviews:
           type: number
           format: float
+      example:
+        name: Small Spoon
+        description: Small spoon ideal for stiring your tea with. Good condition, slightly scuffed.
+        id: 374395
+        price_pennies: 379
+        seller_reviews: 4.7
+tags:
+  - name: "item"
+  - description: "Item operations"
+
+  - name: "html"
+  - description: "Operations that return HTML"
