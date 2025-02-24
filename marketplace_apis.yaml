@@ -4,7 +4,7 @@ info:
   description: This API allows posting, fetching, and purchasing of products from an authenticated user.
   version: 0.0.1
 paths:
-  /item:
+  /item/{id}:
     get:
       tags: ["item", "html"]
       operationId: get_item_page
@@ -13,7 +13,7 @@ paths:
       parameters:
       - name: id
         description: The unique ID of the item.
-        in: query
+        in: path
         schema:
           type: integer
           minimum: 0
@@ -26,6 +26,49 @@ paths:
                   - "$ref": "#/components/schemas/ItemModel"
         "404":
           description: "Item ID does not exist. Returns 404 page."
+  /signup:
+    get:
+      tags: ["user", "html"]
+      operationId: get_sign_up_page
+      summary: Get the sign up page
+      description: Retrieves the HTML for the sign up page
+      responses:
+        "200":
+          description: All good. There shouldn't be any reason for this request to fail.
+          content: "text/html"
+    put:
+      tags: ["user"]
+      operationId: user_sign_up
+      summary: User sign up attempt
+      description: Attempts to sign up the user with their provided details. Should return 200 even if the user already exists, to avoid a potential side-channel attack where an attacker can determine if an email is associated with an account. There is a possible timing attack from returning quickly if the user exists, so that needs to be taken into account.
+      parameters:
+        - name: email
+          description: The user's email that they want to sign up with
+          in: query
+          schema:
+            type: string
+            format: email
+          
+          name: user_name
+          description: The user name the user would like to have
+          in: query
+          schema:
+            type: string
+            maxLength: 20
+
+          name: pass_hash
+          description: The user's hashed password
+          schema:
+            type: string
+            minLength: 8 # This is the minimum length for the *un-hashed* password, which will never be seen by the server but needs to be documented.
+      responses:
+        "201":
+          description: Either the user was signed up properly, or the email already exists in the system.
+          content: "application/json"
+        "409":
+          description: A user already exists with the provided user_name, and so the user could not be signed up.
+
+
 
 components:
   schemas:
@@ -64,3 +107,6 @@ tags:
 
   - name: "html"
   - description: "Operations that return HTML"
+
+  - name: "user"
+  - description: "Operations that act with users"
