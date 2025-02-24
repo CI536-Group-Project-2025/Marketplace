@@ -109,7 +109,6 @@ paths:
           schema:
             type: string
             maxLength: 20
-
       responses:
         "201":
           description: Either the user was signed up properly, or the email already exists in the system.
