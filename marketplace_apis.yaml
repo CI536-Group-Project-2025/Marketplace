@@ -208,8 +208,4 @@ tags:
   - description: "Operations that return HTML"
 
   - name: "user"
-<<<<<<< HEAD
   - description: "Operations that act with users"
-=======
-  - description: "Operations that act with users"
->>>>>>> c6ed3d1 (added endpoints for catalogue page)
