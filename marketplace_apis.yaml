@@ -79,8 +79,6 @@ paths:
                     type: integer
                   total_items:
                     type: integer
-          "400":
-            description: "Could not retrieve the catalogue page"
 
   /signup:
     get:
