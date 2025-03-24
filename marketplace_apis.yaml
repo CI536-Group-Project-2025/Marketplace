@@ -143,6 +143,58 @@ paths:
         "403":
           description: Either user does not exist in the DB, or the password hash did not match.
 
+  /basket:
+    tags: ["basket", "item", "html"]
+    operationId: page_basket
+    summary: Retrieves the page for the user's basket
+    description: Hydrates the HTML template with the user's basket items and sends the page.
+    responses:
+      $ref: '#/components/schemas/page200'
+  /basket/add/{item_id}:
+    put:
+      tags: ["basket", "item"]
+      operationId: basket_add
+      summary: Adds the given item ID to the user's basket, if it exists
+      description: If the given item ID exists and isn't sold, adds the item to the user's basket.
+      parameters:
+        - name: item_id
+          description: Item's ID
+          in: path
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: The item was added to the user's basket
+          content: "application/json"
+        "404":
+          description: The given item ID does not correspond to an item.
+          content: "application/json"
+        "409":
+          description: The given item ID corresponds to an item that has been bought.
+          content: "application/json"
+  /basket/remove/{item_id}:
+    put:
+      tags: ["basket", "item"]
+      operationId: basket_remove
+      summary: Removes the given item ID from the user's basket, if it is present.
+      description: Attempts to remove the given item from the user's basket. If it does not exist in the basket, returns 404.
+      parameters:
+        - name: item_id
+          description: Item's ID
+          in: path
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: The item was removed from the user's basket
+          content: "application/json"
+        "404":
+          description: The given item ID was not found in the user's basket
+
+
+
       
 
 
@@ -150,7 +202,6 @@ paths:
 
   # Endpoints to be defined:
   # /salt
-  # /basket
   # /catalogue (page)
   # /search (search requests)
   # /forgot-password
@@ -212,5 +263,8 @@ tags:
   - name: "user"
   - description: "Operations that act with users"
 
+  - name: "basket"
+  - description: "Operations that act on baskets"
+  
   - name: "search"
   - description: "Operations that deal with searching"
