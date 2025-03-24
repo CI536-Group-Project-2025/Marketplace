@@ -26,6 +26,7 @@ paths:
                   - "$ref": "#/components/schemas/ItemModel"
         "404":
           description: "Item ID does not exist. Returns 404 page."
+
   /catalogue&{min_price}&{max_price}&{min_rating}&{sort_by}:
     get:
       tags: ["item", "search", "html"]
@@ -114,6 +115,7 @@ paths:
         "409":
           description: A user already exists with the provided user_name, and so the user could not be signed up.
 
+
   /login:
     get:
       tags: ["user"]
@@ -153,6 +155,7 @@ paths:
   # /search (search requests)
   # /forgot-password
   # /forgot-password/redirect (GET: the page you enter your new password on. POST: new password hash, authenticated with some token)
+
 
 
 components:
