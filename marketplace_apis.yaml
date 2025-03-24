@@ -1,0 +1,270 @@
+openapi: 3.1.0
+info:
+  title: Marketplace
+  description: This API allows posting, fetching, and purchasing of products from an authenticated user.
+  version: 0.0.1
+paths:
+  /item/{id}:
+    get:
+      tags: ["item", "html"]
+      operationId: page_item
+      summary: Get an item's page
+      description: Retrieves the individual item HTML page for a given item ID.
+      parameters:
+      - name: id
+        description: The unique ID of the item.
+        in: path
+        schema:
+          type: integer
+          minimum: 0
+      responses:
+        "200":
+          description: Item ID exists, returns the HTML page for the given item
+          content: 
+            - "text/html":
+                - "schema":
+                  - "$ref": "#/components/schemas/ItemModel"
+        "404":
+          description: "Item ID does not exist. Returns 404 page."
+
+  /catalogue&{min_price}&{max_price}&{min_rating}&{sort_by}:
+    get:
+      tags: ["item", "search", "html"]
+      operationId: page_catalogue
+      summary: Retrieve the catalogue page
+      description: Returns a list of products, optionally filtered by search term, category, price, and seller rating.
+      parameters:
+        - name: min_price
+          in: path
+          description: Minimum price in pennies
+          schema:
+            type: integer
+            minimum: 0
+        - name: max_price
+          in: path
+          description: Maximum price in pennies
+          schema:
+            type: integer
+            minimum: 0
+        - name: min_rating
+          in: path
+          description: Minimum seller rating (e.g., 4.0 for 4-star and above)
+          schema:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 5
+        - name: sort_by
+          in: path
+          description: Sorting criteria
+          schema:
+            type: string
+            enum: ["price_asc", "price_desc", "rating"]
+      responses:
+        "200":
+          description: Successfully retrieved the catalogue
+          content: "application/json"
+          schema:
+            type: object
+            properties:
+              products:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ItemModel"
+              pagination:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  total_pages:
+                    type: integer
+                  total_items:
+                    type: integer
+
+  /signup:
+    get:
+      tags: ["user", "html"]
+      operationId: page_sign_up
+      summary: Get the sign up page
+      description: Retrieves the HTML for the sign up page
+      responses:
+        $ref: '#/components/schemas/page200'
+    put:
+      tags: ["user"]
+      operationId: user_sign_up
+      summary: User sign up attempt
+      description: Attempts to sign up the user with their provided details. 
+      parameters:
+        - $ref: '#/components/schemas/pass_hash'
+        - name: email
+          description: The user's email that they want to sign up with
+          in: query
+          schema:
+            type: string
+            format: email
+        - name: user_name
+          description: The user name the user would like to have
+          in: query
+          schema:
+            type: string
+            maxLength: 20
+      responses:
+        "201":
+          description: Either the user was signed up properly, or the email already exists in the system.
+          content: "application/json"
+        "409":
+          description: A user already exists with the provided user_name, and so the user could not be signed up.
+
+
+  /login:
+    get:
+      tags: ["user"]
+      operationId: page_login
+      summary: Retrieves the login page
+      description: Retrieves the HTML for the login page
+      responses:
+        $ref: '#/components/schemas/page200'
+    put:
+      tags: ["user"]
+      operationId: user_login
+      summary: User login attempt
+      description: Attempts to login a user with their given credentials.
+      parameters:
+        - name: user_name
+          description: The user's username
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/schemas/pass_hash'
+      responses:
+        "200":
+          description: User's password hash and username matched what is stored in the DB
+          content: "application/json"
+        "403":
+          description: Either user does not exist in the DB, or the password hash did not match.
+
+  /basket:
+    tags: ["basket", "item", "html"]
+    operationId: page_basket
+    summary: Retrieves the page for the user's basket
+    description: Hydrates the HTML template with the user's basket items and sends the page.
+    responses:
+      $ref: '#/components/schemas/page200'
+  /basket/add/{item_id}:
+    put:
+      tags: ["basket", "item"]
+      operationId: basket_add
+      summary: Adds the given item ID to the user's basket, if it exists
+      description: If the given item ID exists and isn't sold, adds the item to the user's basket.
+      parameters:
+        - name: item_id
+          description: Item's ID
+          in: path
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: The item was added to the user's basket
+          content: "application/json"
+        "404":
+          description: The given item ID does not correspond to an item.
+          content: "application/json"
+        "409":
+          description: The given item ID corresponds to an item that has been bought.
+          content: "application/json"
+  /basket/remove/{item_id}:
+    put:
+      tags: ["basket", "item"]
+      operationId: basket_remove
+      summary: Removes the given item ID from the user's basket, if it is present.
+      description: Attempts to remove the given item from the user's basket. If it does not exist in the basket, returns 404.
+      parameters:
+        - name: item_id
+          description: Item's ID
+          in: path
+          schema:
+            type: integer
+            minimum: 0
+      responses:
+        "200":
+          description: The item was removed from the user's basket
+          content: "application/json"
+        "404":
+          description: The given item ID was not found in the user's basket
+
+
+
+      
+
+
+
+
+  # Endpoints to be defined:
+  # /salt
+  # /catalogue (page)
+  # /search (search requests)
+  # /forgot-password
+  # /forgot-password/redirect (GET: the page you enter your new password on. POST: new password hash, authenticated with some token)
+
+
+
+components:
+  schemas:
+    ItemModel:
+      description: Item information used to build out the Item page template
+      type: object
+      required:
+        - name
+        - description
+        - id
+        - price_pennies # Item price in pennies (to avoid floating point precision errors) 
+        - seller_reviews # Average seller reviews
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        id:
+          type: integer
+          minimum: 0
+        price_pennies:
+          type: integer
+          minimum: 20
+        seller_reviews:
+          type: number
+          format: float
+      example:
+        name: Small Spoon
+        description: Small spoon ideal for stiring your tea with. Good condition, slightly scuffed.
+        id: 374395
+        price_pennies: 379
+        seller_reviews: 4.7
+    pass_hash:
+      name: pass_hash
+      description: The user's hashed password
+      in: query
+      schema:
+        type: string
+        minLength: 8 # This is the minimum length for the *un-hashed* password, which will never be seen by the server but needs to be documented.
+    page200:
+      "200":
+        description: All good. There shouldn't be any reason for this request to fail.
+        content: "text/html"
+
+
+tags:
+  - name: "item"
+  - description: "Item operations"
+
+  - name: "html"
+  - description: "Operations that return HTML"
+
+  - name: "user"
+  - description: "Operations that act with users"
+
+  - name: "basket"
+  - description: "Operations that act on baskets"
+  
+  - name: "search"
+  - description: "Operations that deal with searching"
