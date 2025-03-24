@@ -26,6 +26,61 @@ paths:
                   - "$ref": "#/components/schemas/ItemModel"
         "404":
           description: "Item ID does not exist. Returns 404 page."
+
+  /catalogue&{min_price}&{max_price}&{min_rating}&{sort_by}:
+    get:
+      tags: ["item", "search", "html"]
+      operationId: page_catalogue
+      summary: Retrieve the catalogue page
+      description: Returns a list of products, optionally filtered by search term, category, price, and seller rating.
+      parameters:
+        - name: min_price
+          in: path
+          description: Minimum price in pennies
+          schema:
+            type: integer
+            minimum: 0
+        - name: max_price
+          in: path
+          description: Maximum price in pennies
+          schema:
+            type: integer
+            minimum: 0
+        - name: min_rating
+          in: path
+          description: Minimum seller rating (e.g., 4.0 for 4-star and above)
+          schema:
+            type: number
+            format: float
+            minimum: 0
+            maximum: 5
+        - name: sort_by
+          in: path
+          description: Sorting criteria
+          schema:
+            type: string
+            enum: ["price_asc", "price_desc", "rating"]
+      responses:
+        "200":
+          description: Successfully retrieved the catalogue
+          content: "application/json"
+          schema:
+            type: object
+            properties:
+              products:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ItemModel"
+              pagination:
+                type: object
+                properties:
+                  current_page:
+                    type: integer
+                  total_pages:
+                    type: integer
+                  total_items:
+                    type: integer
+
   /signup:
     get:
       tags: ["user", "html"]
@@ -53,13 +108,14 @@ paths:
           schema:
             type: string
             maxLength: 20
-
       responses:
         "201":
           description: Either the user was signed up properly, or the email already exists in the system.
           content: "application/json"
         "409":
           description: A user already exists with the provided user_name, and so the user could not be signed up.
+
+
   /login:
     get:
       tags: ["user"]
@@ -155,3 +211,6 @@ tags:
 
   - name: "user"
   - description: "Operations that act with users"
+
+  - name: "search"
+  - description: "Operations that deal with searching"
