@@ -1,5 +1,1 @@
-fastapi
-uvicorn[standard]
-pydantic
-python-multipart
-email-validator
+flask

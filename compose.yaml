@@ -26,6 +26,14 @@ services:
       - postgres
     user: root
 
+  marketplace:
+    build: .
+    restart: always
+    ports:
+      - "8000:5000"
+    depends_on:
+      - postgres
+
 networks: 
   marketplace_default:
     driver: bridge
