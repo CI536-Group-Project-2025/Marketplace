@@ -110,10 +110,10 @@ paths:
             maxLength: 20
       responses:
         "201":
-          description: Either the user was signed up properly, or the email already exists in the system.
+          description: The user was signed up properly.
           content: "application/json"
         "409":
-          description: A user already exists with the provided user_name, and so the user could not be signed up.
+          description: A user already exists with the provided user_name or email, and so the user could not be signed up.
 
 
   /login:
