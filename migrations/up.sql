@@ -1,11 +1,11 @@
 CREATE TABLE IF NOT EXISTS users (
-  id integer PRIMARY KEY,
+  id bigint GENERATED ALWAYS AS IDENTITY (CACHE 20) PRIMARY KEY,
   name varchar(20) NOT NULL,
   mean_rating float
 );
 
 CREATE TABLE IF NOT EXISTS usersLogin (
-  id integer PRIMARY KEY REFERENCES users (id),
+  id bigint PRIMARY KEY REFERENCES users (id),
   email varchar(254) UNIQUE,
   hash varchar(60),
   deliveryAddr text,
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS salts (
 
 CREATE TABLE IF NOT EXISTS items (
   item_id integer PRIMARY KEY,
-  seller_id integer REFERENCES users (id),
+  seller_id bigint REFERENCES users (id),
   name varchar(50) NOT NULL,
   description varchar(300) NOT NULL,
   price_pennies integer CHECK (price_pennies > 0) NOT NULL
@@ -28,12 +28,12 @@ CREATE TABLE IF NOT EXISTS items (
 
 CREATE TABLE IF NOT EXISTS transactions (
   transaction_id integer PRIMARY KEY,
-  seller_id integer REFERENCES users (id),
-  buyer_id integer REFERENCES users (id) CHECK (seller_id != buyer_id)
+  seller_id bigint REFERENCES users (id),
+  buyer_id bigint REFERENCES users (id) CHECK (seller_id != buyer_id)
 );
 
 CREATE TABLE IF NOT EXISTS reviews (
-  seller_id integer REFERENCES users (id),
-  buyer_id integer REFERENCES users (id) CHECK (seller_id != buyer_id),
+  seller_id bigint REFERENCES users (id),
+  buyer_id bigint REFERENCES users (id) CHECK (seller_id != buyer_id),
   rating integer CHECK (rating <= 5)
 );
