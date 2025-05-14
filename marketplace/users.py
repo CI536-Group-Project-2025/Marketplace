@@ -1,6 +1,9 @@
 from argon2 import PasswordHasher
 from argon2.profiles import RFC_9106_LOW_MEMORY
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, jsonify, render_template, redirect, request, session
+from flask_session import Session
+import os
+import psycopg2
 from psycopg2 import DatabaseError
 from werkzeug.wrappers import Response
 
@@ -13,9 +16,13 @@ MIN_PASSWORD_LEN = 8
 ph = PasswordHasher.from_parameters(RFC_9106_LOW_MEMORY)
 bp = Blueprint("users", __name__, url_prefix="")
 
-@bp.put('/signup')
-def signup():
-    content = request.get_json()
+@bp.get('/signup')
+def page_sign_up():
+    return render_template("signup.html")
+
+@bp.post('/signup')
+def user_sign_up():
+    content = request.form
     if not content:
         response = jsonify({"message": "Invalid MIME type"})
         response.status = 400
@@ -24,14 +31,18 @@ def signup():
     password = content.get("pw")
     email = content.get("email")
     user_name = content.get("user_name")
-    addr = content.get("addr")
+    post_code = content.get("post_code")
+    addr_line_1 = content.get("address_line1")
+    addr_line_2 = content.get("address_line2")
+    addr_level_1 = content.get("address_level1")
+    addr_level_2 = content.get("address_level2")
 
     # Delete the contents of the request so that `password` isn't hanging
     # around in memory after we are done with it.
     del content
 
     # We need all of this information to create a new user
-    if not (password and email and user_name and addr):
+    if not (password and email and user_name and post_code and addr_line_1):
         response = jsonify({"message": "Valid json data not provided"})
         response.status = 400
         return response
@@ -48,29 +59,24 @@ def signup():
     del password
 
     try:
-        cur = get_db_cursor()
+        conn = psycopg2.connect(host='postgres',
+                                database='postgres',
+                                user=os.environ["DB_USER"],
+                                password=os.environ["DB_PASS"])
 
-        # This query inserts a new user in to the users table, receives the automatically
-        # generated `id` (`RETURNING id`), and uses that id to populate the userslogin
-        # entry. It's all executed as one query so that if any part of it fails, the entire
-        # query is scrapped.
-        cur.execute("""
-                    WITH user_id AS (INSERT INTO users (name)
-                                     VALUES (%s)
-                                     RETURNING id)
-                    INSERT INTO userslogin (id, email, hash, deliveryaddr) 
-                        SELECT *, %s, %s, %s FROM user_id
-                    RETURNING id;
-                    """, (user_name, email, hash, addr))
+        cur = conn.cursor()
 
-        id = cur.fetchone()[0]
+        cur.execute("INSERT INTO users (name, email, hash) VALUES (%s, %s, %s);", (user_name, email, hash))
 
-        commit()
+        cur.execute("INSERT INTO usersShippingAddress VALUES (%s, %s, %s, %s, %s, %s);", (user_name, post_code, addr_line_1, addr_line_2, addr_level_2, addr_level_1))
+
+        conn.commit()
         cur.close()
 
-        response = jsonify({"id": id})
-        return response
+        session["user"] = user_name
+        return redirect('/')
     except DatabaseError as e:
+        conn.rollback()
         cur.close()
         response = jsonify({"message": "A user already exists with that username or email"})
         response.status = 409

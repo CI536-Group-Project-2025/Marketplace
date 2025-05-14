@@ -4,6 +4,7 @@ COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 EXPOSE 5000
 COPY marketplace marketplace
+COPY marketplace/templates marketplace/templates
 COPY requirements.txt requirements.txt
 COPY migrations migrations
 CMD ["python3", "-m", "marketplace"]
