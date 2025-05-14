@@ -7,15 +7,10 @@ CREATE TABLE IF NOT EXISTS users (
 CREATE TABLE IF NOT EXISTS usersLogin (
   id bigint PRIMARY KEY REFERENCES users (id),
   email varchar(254) UNIQUE,
-  hash varchar(60),
+  hash varchar(100),
   deliveryAddr text,
   CONSTRAINT
     proper_email CHECK (email ~* '^[A-Za-z0-9._+%-]+@[A-Za-z0-9.-]+[.][A-Za-z]+$')
-);
-
-CREATE TABLE IF NOT EXISTS salts (
-  id integer PRIMARY KEY REFERENCES users (id),
-  salt varchar(20)
 );
 
 CREATE TABLE IF NOT EXISTS items (
