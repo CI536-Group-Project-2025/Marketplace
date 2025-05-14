@@ -1,4 +1,4 @@
-from flask import Flask, session
+from flask import Flask, render_template, session
 from flask_session import Session
 import psycopg2
 from marketplace import item, users
@@ -23,9 +23,8 @@ app.register_blueprint(item.bp)
 app.register_blueprint(users.bp)
 
 @app.route('/')
-def hello():
-    # This route should return the catalogue page
-    return f"Hello World!\n"
+def page_catalogue():
+    return render_template('catalogue.html')
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")

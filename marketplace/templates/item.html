@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}Product Page{% endblock %}
+{% block style %}"{{ url_for('static', filename='css/item.css') }}"{% endblock %}
+
+{% block content %}
+<main class="product-container">
+    <div class="image-section">
+        <div class="thumbnail-container">
+            <div class="thumbnail">
+                <img src="" alt="">
+            </div>
+            <div class="thumbnail">
+                <img src="" alt="">
+            </div>
+            <div class="thumbnail">
+                <img src="" alt="">
+            </div>
+        </div>
+        <div class="main-image">
+            <img src="https://c4.wallpaperflare.com/wallpaper/107/184/867/2500x2500-px-digital-art-neon-new-retro-wave-wallpaper-preview.jpg" alt="Product Image">
+        </div>
+    </div>
+
+    <div class="details-section">
+        <h2 class="product-name">Product Name</h2>
+        <p class="product-price">£99.99</p>
+        <p class="seller-name">Sold by Seller Name</p>
+        <button class="add-to-basket">Add To Basket</button>
+        <p class="product-description">
+            This is a sample product description. It contains all the necessary details about the product.
+        </p>
+        <div class="reviews">
+            ⭐⭐⭐⭐⭐ ... Reviews
+        </div>
+    </div>
+</main>
+{% endblock %}
+{% block script %}"{{ url_for('static', filename='script/item.js') }}"{% endblock %}

@@ -1,35 +1,3 @@
-/* Reset & Basic Styling */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Segoe UI', Arial, sans-serif;
-    background-color: #f8f9fa;
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-    color: #333;
-}
-
-/* Header */
-header {
-    background: #2c3e50; /* Deep blue */
-    padding: 15px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    color: white;
-}
-
-.logo {
-    font-family: 'Playfair Display', serif;
-    font-weight: 700;
-    color: #f1c40f; /* Gold accent */
-}
-
 .search-bar {
     flex-grow: 1;
     padding: 10px;
@@ -208,13 +176,4 @@ header {
     margin-top: 20px;
     color: #f1c40f;
     font-weight: bold;
-}
-
-/* Footer */
-footer {
-    background: #2c3e50;
-    padding: 15px;
-    text-align: center;
-    color: white;
-    font-size: 14px;
 }
