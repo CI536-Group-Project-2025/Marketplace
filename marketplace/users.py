@@ -85,7 +85,7 @@ def user_sign_up():
         return response
 
 
-@bp.put("/login")
+@bp.post("/login")
 def user_login():
     content = request.get_json()
     if not content:
