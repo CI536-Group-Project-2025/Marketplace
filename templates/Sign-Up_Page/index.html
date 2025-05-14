@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up | Marketplace</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1 class="logo">Marketplace</h1>
+    </header>
+
+    <main class="auth-container">
+        <h2 class="auth-title">Create Account</h2>
+        <form class="auth-form">
+            <div class="name-fields">
+                <div class="input-group">
+                    <label for="first-name">First Name</label>
+                    <input type="text" id="first-name" placeholder="John" required>
+                </div>
+                <div class="input-group">
+                    <label for="last-name">Last Name</label>
+                    <input type="text" id="last-name" placeholder="Doe" required>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" placeholder="your@email.com" required>
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="••••••••" required minlength="8">
+            </div>
+            <div class="input-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input type="password" id="confirm-password" placeholder="••••••••" required>
+            </div>
+            <button type="submit">Sign Up</button>
+        </form>
+        <p class="auth-footer">Already have an account? <a href="/Log-In Page/index.html">Log in</a></p>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Marketplace</p>
+    </footer>
+</body>
+</html>
