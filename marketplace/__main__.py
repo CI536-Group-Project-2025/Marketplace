@@ -12,6 +12,13 @@ app.config["SESSION_PERMANENT"] = False
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
+# Session config - for keeping users logged in.
+# This will log users out when they close the browser
+app.config["SESSION_PERMANENT"] = False
+# This will store session data on the filesystem
+app.config["SESSION_TYPE"] = "filesystem"
+Session(app)
+
 app.register_blueprint(item.bp)
 app.register_blueprint(users.bp)
 
