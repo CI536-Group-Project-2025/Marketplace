@@ -85,6 +85,10 @@ def user_sign_up():
         return response
 
 
+@bp.get("/login")
+def page_login():
+    return render_template("login.html")
+
 @bp.post("/login")
 def user_login():
     content = request.get_json()
