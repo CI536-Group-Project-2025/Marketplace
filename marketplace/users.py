@@ -1,14 +1,11 @@
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from argon2.profiles import RFC_9106_LOW_MEMORY
-<<<<<<< HEAD
 from flask import Blueprint, jsonify, render_template, redirect, request, session
 from flask_session import Session
 import os
 import psycopg2
-=======
 from flask import Blueprint, jsonify, request, session
->>>>>>> 14f41ad (Implemented login PUT with sessions)
 from psycopg2 import DatabaseError
 from werkzeug.wrappers import Response
 
@@ -109,7 +106,7 @@ def user_login():
     try:
         cur = get_db_cursor()
 
-        cur.execute("SELECT hash FROM userslogin WHERE id = (SELECT id FROM users WHERE name = %s);", (user_name,))
+        cur.execute("SELECT hash FROM users WHERE name = %s;", (user_name,))
         
         hash = cur.fetchone()
         commit()
