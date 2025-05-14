@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Marketplace</title>
+</head>
+<body>
+    <h1>Register</h1>
+    <form action="/signup" method="POST">
+        <label for="user_name">Username</label>
+        <input id="user_name" autocomplete="username" type="text" name="user_name" required>
+        <label for="email">E-mail</label>
+        <input id="email"" autocomplete="email" type="email" name="email" required>
+        <label for="New Password"></label>
+        <input id="New Password" autocomplete="new-password" type="password" name="pw" required>
+        <label for="address_line1">Address Line 1</label>
+        <input id="address_line1" autocomplete="shipping address-line1" type="text" name="address_line1" required>
+        <label for="address_line2">Address Line 2</label>
+        <input id="address_line2" autocomplete="section-1 shipping address-line2" type="text" name="address_line2">
+        <label for="address_level2">Town/City</label>
+        <input id="address_level2" autocomplete="section-1 shipping address-level2" type="text" name="address_level2">
+        <label for="address_level1">County</label>
+        <input id="address_level1" autocomplete="section-1 shipping address-level1" type="text" name="address_level1">
+        <label for="post_code">Post Code</label>
+        <input id="post_code" autocomplete="section-1 shipping postal-code" type="text" name="post_code" required>
+        <input type="submit" value="Register">
+   </form>
+</body>
+</html>
