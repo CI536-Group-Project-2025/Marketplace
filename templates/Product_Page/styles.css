@@ -1,0 +1,220 @@
+/* Reset & Basic Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    color: #333;
+}
+
+/* Header */
+header {
+    background: #2c3e50; /* Deep blue */
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+}
+
+.logo {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    color: #f1c40f; /* Gold accent */
+}
+
+.search-bar {
+    flex-grow: 1;
+    padding: 10px;
+    margin: 0 15px;
+    border: 2px solid #34495e;
+    border-radius: 25px;
+    background: #34495e;
+    color: white;
+    font-size: 14px;
+}
+
+.search-bar::placeholder {
+    color: #bdc3c7;
+}
+
+.search-btn {
+    background: #f1c40f; /* Gold */
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 18px;
+    cursor: pointer;
+    color: #2c3e50;
+    transition: all 0.3s;
+}
+
+.search-btn:hover {
+    background: #f39c12; /* Darker gold */
+}
+
+/* Main Layout */
+.product-container {
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    background: white;
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Image Section (3/4 Width) */
+.image-section {
+    width: 75%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 30px;
+}
+
+/* Thumbnails */
+.thumbnail-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.thumbnail {
+    width: 70px;
+    height: 70px;
+    background: #ecf0f1;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 2px solid #dfe6e9;
+    transition: all 0.3s;
+}
+
+.thumbnail:hover {
+    border-color: #f1c40f;
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Main product image */
+.main-image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 60%;
+    height: 450px;
+    background: #f9f9f9;
+    border-radius: 12px;
+    border: 1px solid #eee;
+}
+
+.main-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 8px;
+}
+
+/* Details Section (1/4 Width) */
+.details-section {
+    width: 25%;
+    background: #f8f9fa;
+    padding: 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-left: 1px solid #eee;
+}
+
+.product-name {
+    font-size: 24px;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+.product-price {
+    font-size: 28px;
+    font-weight: bold;
+    color: #e74c3c;
+    margin: 10px 0;
+}
+
+.seller-name {
+    color: #7f8c8d;
+    margin-bottom: 20px;
+}
+
+.add-to-basket {
+    background: #f1c40f;
+    color: #2c3e50;
+    padding: 12px;
+    margin: 15px 0;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 16px;
+    transition: all 0.3s;
+}
+
+.add-to-basket:hover {
+    background: #f39c12;
+    transform: translateY(-2px);
+}
+
+.quantity-control {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.quantity-btn {
+    background: #ecf0f1;
+    border: none;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s;
+}
+
+.quantity-btn:hover {
+    background: #bdc3c7;
+}
+
+.product-description {
+    line-height: 1.6;
+    color: #555;
+    margin: 15px 0;
+}
+
+.reviews {
+    margin-top: 20px;
+    color: #f1c40f;
+    font-weight: bold;
+}
+
+/* Footer */
+footer {
+    background: #2c3e50;
+    padding: 15px;
+    text-align: center;
+    color: white;
+    font-size: 14px;
+}
