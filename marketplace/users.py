@@ -1,9 +1,14 @@
 from argon2 import PasswordHasher
+from argon2.exceptions import VerifyMismatchError
 from argon2.profiles import RFC_9106_LOW_MEMORY
+<<<<<<< HEAD
 from flask import Blueprint, jsonify, render_template, redirect, request, session
 from flask_session import Session
 import os
 import psycopg2
+=======
+from flask import Blueprint, jsonify, request, session
+>>>>>>> 14f41ad (Implemented login PUT with sessions)
 from psycopg2 import DatabaseError
 from werkzeug.wrappers import Response
 
@@ -81,4 +86,51 @@ def user_sign_up():
         response = jsonify({"message": "A user already exists with that username or email"})
         response.status = 409
         return response
+
+
+@bp.put("/login")
+def user_login():
+    content = request.get_json()
+    if not content:
+        response = jsonify({"message": "Invalid MIME type"})
+        response.status = 400
+        return response
+
+    password = content.get("pw")
+    user_name = content.get("user_name")
+
+    del content
+
+    if not (password and user_name):
+        response = jsonify({"message": "Valid json data not provided"})
+        response.status = 400
+        return response
+
+    try:
+        cur = get_db_cursor()
+
+        cur.execute("SELECT hash FROM userslogin WHERE id = (SELECT id FROM users WHERE name = %s);", (user_name,))
+        
+        hash = cur.fetchone()
+        commit()
+        cur.close()
+
+        if not len(hash):
+            response = jsonify({"message": "No user by that name exists"})
+            response.status = 404
+            return response
+        
+        ph.verify(hash[0], password)
+
+        # Add a user session
+        session["user"] = user_name
+        
+        return jsonify({"message": "Successfully logged in"})
+    except VerifyMismatchError:
+        response = jsonify({"message": "Incorrect user name or password"})
+        response.status = 403
+        return response
+
+        
+
 
