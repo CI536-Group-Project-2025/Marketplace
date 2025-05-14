@@ -1,29 +1,53 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Marketplace</title>
-</head>
-<body>
-    <h1>Register</h1>
-    <form action="/signup" method="POST">
-        <label for="user_name">Username</label>
-        <input id="user_name" autocomplete="username" type="text" name="user_name" required>
-        <label for="email">E-mail</label>
-        <input id="email"" autocomplete="email" type="email" name="email" required>
-        <label for="New Password"></label>
-        <input id="New Password" autocomplete="new-password" type="password" name="pw" required>
-        <label for="address_line1">Address Line 1</label>
-        <input id="address_line1" autocomplete="shipping address-line1" type="text" name="address_line1" required>
-        <label for="address_line2">Address Line 2</label>
-        <input id="address_line2" autocomplete="section-1 shipping address-line2" type="text" name="address_line2">
-        <label for="address_level2">Town/City</label>
-        <input id="address_level2" autocomplete="section-1 shipping address-level2" type="text" name="address_level2">
-        <label for="address_level1">County</label>
-        <input id="address_level1" autocomplete="section-1 shipping address-level1" type="text" name="address_level1">
-        <label for="post_code">Post Code</label>
-        <input id="post_code" autocomplete="section-1 shipping postal-code" type="text" name="post_code" required>
-        <input type="submit" value="Register">
-   </form>
-</body>
-</html>
+{% extends 'base.html' %}
+
+{% block title %}Sign Up{% endblock %}
+{% block style %}"{{ url_for('static', filename='css/auth.css') }}"{% endblock %}
+
+{% block content %}
+<main class="auth-container">
+    <h2 class="auth-title">Create Account</h2>
+    <form action="/signup" method="POST" class="auth-form">
+
+        <div class="name-fields">
+            <div class="input-group">
+                <label for="user-name">Username</label>
+                <input id="user-name" autocomplete="section-1 username" type="text" name="user_name" required>
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label for="email">E-mail</label>
+            <input id="email" autocomplete="section-1 email" type="email" name="email" required>
+        </div>
+
+        <div class="input-group">
+            <label for="new-password">Password</label>
+            <input id="new-password" autocomplete="section-1 new-password" type="password" name="pw" required minlength="{{ MIN_PASSWORD_LEN }}">
+        </div>
+
+        <div class="input-group">
+            <label for="address-line1">Address Line 1</label>
+            <input id="address-line1" autocomplete="section-1 shipping address-line1" type="text" name="address_line1" required>
+        </div>
+        <div class="input-group">
+            <label for="address-line2">Address Line 2</label>
+            <input id="address-line2" autocomplete="section-1 shipping address-line2" type="text" name="address_line2">
+        </div>
+        <div class="input-group">
+            <label for="address-level2">Town/City</label>
+            <input id="address-level2" autocomplete="section-1 shipping address-level2" type="text" name="address_level2">
+        </div>
+        <div class="input-group">
+            <label for="address-level1">County</label>
+            <input id="address-level1" autocomplete="section-1 shipping address-level1" type="text" name="address_level1">
+        </div>
+        <div class="input-group">
+            <label for="post-code">Post Code</label>
+            <input id="post-code" autocomplete="section-1 shipping postal-code" type="text" name="post_code" required>
+        </div>
+
+        <button type="submit">Sign Up</button>
+    </form>
+    <p class="auth-footer">Already have an account? <a href="{{ url_for('users.page_login') }}">Log in</a></p>
+</main>
+{% endblock %}
