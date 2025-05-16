@@ -1,26 +1,10 @@
-
 from flask import Blueprint, request, jsonify
-import psycopg2
-import os
 
-app = Flask(__name__)
-app.wsgi_app = ProxyFix(app.wsgi_app)
+from marketplace.db import get_db_connection
 
-# Session config
-app.config["SESSION_TYPE"] = "filesystem"
-app.secret_key = os.getenv("SECRET_KEY", "defaultsecret")
-Session(app)
+bp = Blueprint("catalogue", __name__, url_prefix="")
 
-# Database connection
-def get_db():
-    return psycopg2.connect(
-        dbname=os.getenv("DB_NAME", "marketplace"),
-        user=os.getenv("DB_USER", "postgres"),
-        password=os.getenv("DB_PASS", "password"),
-        host=os.getenv("DB_HOST", "localhost"),
-        port=os.getenv("DB_PORT", "5432")
-    )
-@app.route("/catalogue")
+@bp.route("/")
 def catalogue():
     min_price = request.args.get("min_price", default=0, type=int)
     max_price = request.args.get("max_price", default=10**9, type=int)
@@ -38,22 +22,23 @@ def catalogue():
 
     offset = (page - 1) * per_page
 
+    conn = get_db_connection()
+    cur = conn.cursor()
+
     try:
-        conn = get_db()
-        cur = conn.cursor(cursor_factory=RealDictCursor)
 
         cur.execute("""
-            SELECT COUNT(*) FROM items 
-            WHERE price_pennies BETWEEN %s AND %s 
-            AND seller_reviews >= %s
+            SELECT COUNT(*) FROM items JOIN usersRatings ON seller_id = usersRatings.name
+            WHERE price_pennies BETWEEN %s AND %s
+            AND mean_rating >= %s;
         """, (min_price, max_price, min_rating))
-        total_items = cur.fetchone()["count"]
+        total_items = cur.fetchone()[0]
         total_pages = (total_items + per_page - 1) // per_page
 
         cur.execute(f"""
-            SELECT * FROM items 
+            SELECT * FROM items JOIN usersRatings ON seller_id = usersRatings.name 
             WHERE price_pennies BETWEEN %s AND %s 
-            AND seller_reviews >= %s
+            AND mean_rating >= %s
             ORDER BY {sort_sql}
             LIMIT %s OFFSET %s
         """, (min_price, max_price, min_rating, per_page, offset))
@@ -73,6 +58,3 @@ def catalogue():
         if conn:
             cur.close()
             conn.close()
-
-if __name__ == "__main__":
-    app.run(debug=True, port=8000)
