@@ -28,6 +28,7 @@ services:
     build: .
     restart: always
     environment:
+      - POSTGRES_HOST=postgres
       - DB_USER=postgres
       - DB_PASS=postgres
     ports:
