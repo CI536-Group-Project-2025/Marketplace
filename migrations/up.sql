@@ -24,7 +24,7 @@ CREATE TABLE IF NOT EXISTS usersRatings (
 
 CREATE TABLE IF NOT EXISTS items (
   id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
-  seller_id varchar(20) REFERENCES users (name),
+  seller_id varchar(20) NOT NULL REFERENCES users (name),
   name varchar(50) NOT NULL,
   description varchar(300) NOT NULL,
   price_pennies integer CHECK (price_pennies > 0) NOT NULL,

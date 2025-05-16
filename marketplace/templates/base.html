@@ -10,7 +10,7 @@
 <body>
     <header>
         <nav>
-            <h1 class="logo"><a href="{{ url_for('page_catalogue') }}">Marketplace</a></h1>
+            <h1 class="logo"><a href="{{ url_for('catalogue.page_catalogue') }}">Marketplace</a></h1>
             <ul>
                 {% if session["user"] %}
                     <li><a href="{{ url_for('users.page_login') }}">Log Out</a>

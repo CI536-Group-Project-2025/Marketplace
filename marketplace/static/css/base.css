@@ -35,6 +35,39 @@ header {
   margin-bottom: 10px;
 }
 
+.search-bar {
+  flex: 1 1 60%;
+  padding: 10px;
+  margin: 0 10px;
+  border: 2px solid #34495e;
+  border-radius: 25px;
+  background: #34495e;
+  color: white;
+  font-size: 14px;
+  min-width: 100px;
+}
+
+.search-bar::placeholder {
+  color: #bdc3c7;
+}
+
+.search-btn {
+  background: #f1c40f;
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  color: #2c3e50;
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+
+.search-btn:hover {
+  background: #f39c12;
+}
+
 /* Footer */
 footer {
   background: #2c3e50;
