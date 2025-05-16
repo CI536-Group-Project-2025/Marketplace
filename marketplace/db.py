@@ -1,16 +1,11 @@
 import os
 import psycopg2
 
-conn = psycopg2.connect(host='postgres',
-                        database='postgres',
-                        user=os.environ["DB_USER"],
-                        password=os.environ["DB_PASS"])
-
-def get_db_cursor():
-    return conn.cursor()
-
-def commit():
-    return conn.commit()
-
-def rollback():
-    return conn.rollback()
+def get_db_connection():
+    return psycopg2.connect(
+        host=os.getenv("POSTGRES_HOST", "localhost"),
+        database=os.getenv("POSTGRES_DB", "postgres"),
+        user=os.getenv("DB_USER", "postgres"),
+        password=os.getenv("DB_PASS", "postgres"),
+        port=os.getenv("POSTGRES_PORT", 5432)
+    )

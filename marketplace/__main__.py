@@ -24,7 +24,7 @@ app.register_blueprint(users.bp)
 
 @app.route('/')
 def page_catalogue():
-    return render_template('catalogue.html')
+    return render_template("catalogue.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0")

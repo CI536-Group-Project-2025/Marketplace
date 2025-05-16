@@ -1,15 +1,15 @@
+import functools
+
 from argon2 import PasswordHasher
 from argon2.exceptions import VerifyMismatchError
 from argon2.profiles import RFC_9106_LOW_MEMORY
-from flask import Blueprint, jsonify, render_template, redirect, request, session
-from flask_session import Session
+from flask import Blueprint, jsonify, render_template, redirect, request, session, url_for
 import os
 import psycopg2
 from flask import Blueprint, jsonify, request, session
 from psycopg2 import DatabaseError
-from werkzeug.wrappers import Response
 
-from marketplace.db import get_db_cursor, commit, rollback
+from marketplace.db import get_db_connection
 
 # As defined in our API spec.
 MIN_PASSWORD_LEN = 8
@@ -17,6 +17,16 @@ MIN_PASSWORD_LEN = 8
 # Using hashing parameters tuned for low memory environments (e.g. a docker container)
 ph = PasswordHasher.from_parameters(RFC_9106_LOW_MEMORY)
 bp = Blueprint("users", __name__, url_prefix="")
+
+def login_required(view):
+    @functools.wraps(view)
+    def wrapped_view(**kwargs):
+        if session.get("user") is None:
+            return redirect(url_for('users.page_login'))
+
+        return view(**kwargs)
+
+    return wrapped_view
 
 @bp.get('/signup')
 def page_sign_up():
@@ -60,14 +70,13 @@ def user_sign_up():
     # the memory is zeroed & freed now, but it gives a better chance that it is sooner.
     del password
 
+    conn = psycopg2.connect(host='postgres',
+                            database='postgres',
+                            user=os.environ["DB_USER"],
+                            password=os.environ["DB_PASS"])
+    cur = conn.cursor()
+
     try:
-        conn = psycopg2.connect(host='postgres',
-                                database='postgres',
-                                user=os.environ["DB_USER"],
-                                password=os.environ["DB_PASS"])
-
-        cur = conn.cursor()
-
         cur.execute("INSERT INTO users (name, email, hash) VALUES (%s, %s, %s);", (user_name, email, hash))
 
         cur.execute("INSERT INTO usersShippingAddress VALUES (%s, %s, %s, %s, %s, %s);", (user_name, post_code, addr_line_1, addr_line_2, addr_level_2, addr_level_1))
@@ -77,7 +86,7 @@ def user_sign_up():
 
         session["user"] = user_name
         return redirect('/')
-    except DatabaseError as e:
+    except DatabaseError:
         conn.rollback()
         cur.close()
         response = jsonify({"message": "A user already exists with that username or email"})
@@ -91,7 +100,7 @@ def page_login():
 
 @bp.post("/login")
 def user_login():
-    content = request.get_json()
+    content = request.form
     if not content:
         response = jsonify({"message": "Invalid MIME type"})
         response.status = 400
@@ -103,30 +112,33 @@ def user_login():
     del content
 
     if not (password and user_name):
-        response = jsonify({"message": "Valid json data not provided"})
+        response = jsonify({"message": "Valid form data not provided"})
         response.status = 400
         return response
 
     try:
-        cur = get_db_cursor()
+        conn = get_db_connection()
+        cur = conn.cursor()
 
         cur.execute("SELECT hash FROM users WHERE name = %s;", (user_name,))
         
         hash = cur.fetchone()
-        commit()
-        cur.close()
 
-        if not len(hash):
+        cur.close()
+        conn.close()
+
+        if hash is None or not len(hash):
             response = jsonify({"message": "No user by that name exists"})
             response.status = 404
             return response
         
         ph.verify(hash[0], password)
+        del password
 
         # Add a user session
         session["user"] = user_name
         
-        return jsonify({"message": "Successfully logged in"})
+        return redirect('/')
     except VerifyMismatchError:
         response = jsonify({"message": "Incorrect user name or password"})
         response.status = 403
