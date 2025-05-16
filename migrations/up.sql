@@ -48,3 +48,10 @@ CREATE TABLE IF NOT EXISTS reviews (
   buyer_id varchar(20) REFERENCES users (name) CHECK (seller_id != buyer_id),
   rating integer CHECK (rating <= 5)
 );
+
+CREATE TABLE IF NOT EXISTS baskets (
+    user_name varchar(20) REFERENCES users (name),
+    item_id bigint REFERENCES items (id),
+    -- A user cannot have more than one of the same item in their basket
+    PRIMARY KEY (user_name, item_id)
+);
