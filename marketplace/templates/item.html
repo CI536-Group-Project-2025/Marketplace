@@ -27,7 +27,13 @@
         <h3>{{ id }}</h3>
         <p class="product-price">£99.99</p>
         <p class="seller-name">Sold by Seller Name</p>
-        <button class="add-to-basket">Add To Basket</button>
+        <form action="{{ url_for('basket.basket_add', id=id) }}" method="POST">
+            {% if session["user"] %}
+                <button type="submit" class="add-to-basket">Add To Basket</button>
+            {% else %}
+                <button type="submit" class="add-to-basket" disabled>Log In to Add To Basket</button>
+            {% endif %}
+        </form>
         <p class="product-description">
             This is a sample product description. It contains all the necessary details about the product.
         </p>
@@ -37,4 +43,3 @@
     </div>
 </main>
 {% endblock %}
-{% block script %}"{{ url_for('static', filename='script/item.js') }}"{% endblock %}

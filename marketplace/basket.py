@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, session
+from flask import Blueprint, flash, redirect, render_template, session, url_for
 
 from marketplace.db import get_db_connection
 from marketplace.users import login_required
@@ -25,17 +25,35 @@ def page_basket():
 
     return render_template('basket.html', items=items)
 
-# @bp.route("/", methods=["POST"])
-# def create_basket():
-#     user_id = request.json.get("user_id")
-#     if not user_id:
-#         return jsonify({"error": "user_id is required"}), 400
-#
-#     conn = get_db_connection()
-#     cur = conn.cursor()
-#     cur.execute("INSERT INTO basket (user_id) VALUES (%s) RETURNING id;", (user_id,))
-#     basket_id = cur.fetchone()[0]
-#     conn.commit()
-#     cur.close()
-#     conn.close()
-#     return jsonify({"id": basket_id}), 201
+@bp.post("/add/<int:id>")
+@login_required
+def basket_add(id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    try:
+        cur.execute("INSERT INTO baskets VALUES (%s, %s);", (session["user"], id))
+        conn.commit()
+        cur.close()
+        conn.close()
+        # flash("Added to basket!")
+    except:
+        flash("Could not add item to basket")
+    
+    return redirect(url_for('item.page_item', id=id))
+
+@bp.post("/remove/<int:id>")
+@login_required
+def basket_remove(id):
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Not worried about errors, as the remove option will only be shown when somebody
+    # has it in their basket. If somebody manually tries this endpoint, that's their
+    # problem.
+    cur.execute("DELETE FROM baskets WHERE user_name = %s AND item_id = %s", (session["user"], id))
+    conn.commit()
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('basket.page_basket'))

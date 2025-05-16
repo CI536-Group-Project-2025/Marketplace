@@ -12,7 +12,7 @@
         <nav>
             <h1 class="logo"><a href="{{ url_for('page_catalogue') }}">Marketplace</a></h1>
             <ul>
-                {% if g.user %}
+                {% if session["user"] %}
                     <li><a href="{{ url_for('users.page_login') }}">Log Out</a>
                 {% else %}
                     <li><a href="{{ url_for('users.page_sign_up') }}">Sign Up</a>
@@ -23,6 +23,9 @@
         </nav>
         <input type="text" placeholder="Search for items..." class="search-bar" />
         <button class="search-btn">🔍</button>
+        {% if session["user"] %}
+            <a href="{{ url_for('basket.page_basket') }}">Basket</a>
+        {% endif %}
     </header>
 
     {% block content %} {% endblock %}
