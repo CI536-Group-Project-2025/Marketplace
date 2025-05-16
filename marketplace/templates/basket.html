@@ -12,6 +12,9 @@
                     <p class="item-title">{{ item[0] }}</p>
                     <p class="item-price">£{{ item[1] / 100 }}</p>
                     <p class="seller-name">Seller: {{ item[2] }}</p>
+                    <form action="{{ url_for('basket.basket_remove', id=item[3]) }}" method="POST">
+                        <button type="submit" class="remove">Remove From Basket</button>
+                    </form>
                 </a>
             </div>
         {% endfor %}
