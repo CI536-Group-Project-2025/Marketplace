@@ -1,13 +1,18 @@
 from flask import Blueprint, render_template
-from marketplace.db import get_db_cursor  # Update the module path to the correct one
+
+from marketplace.db import get_db_connection
 
 bp = Blueprint("item", __name__, url_prefix="/item")
 
 @bp.route('/<int:id>')
 def item(id):
-    cursor = get_db_cursor()
-    cursor.execute("SELECT id,name,price,description FROM items WHERE id = %s", (id,))
-    item = cursor.fetchone()
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("SELECT id, items.name, price_pennies, seller_id, description, mean_rating FROM items JOIN usersRatings ON seller_id = usersRatings.name WHERE id = %s", (id,))
+
+    item = cur.fetchone()
+    cur.close()
+    conn.close()
     
     if item is None:
         return "Item not found", 404
@@ -17,12 +22,13 @@ def item(id):
         item_info = {
             "id": item[0],
             "name": item[1],
-            "price": item[2],
-            "description": item[3]
+            "price_pennies": item[2],
+            "seller_id": item[3],
+            "description": item[4],
+            "seller_rating": item[5]
         }
-    except Exception as e:
-        print("Error loading item {id}: {e}")
+    except Exception:
         return "An error occurred while loading the item", 500
 
     
-    return render_template('item.html', item=item_info)
+    return render_template('item.html', item_info=item_info)

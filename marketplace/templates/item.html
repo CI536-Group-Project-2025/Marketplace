@@ -23,11 +23,11 @@
     </div>
 
     <div class="details-section">
-        <h2 class="product-name">Product Name</h2>
+        <h2 class="product-name">{{ item_info["name"] }}</h2>
         <h3>{{ id }}</h3>
-        <p class="product-price">£99.99</p>
-        <p class="seller-name">Sold by Seller Name</p>
-        <form action="{{ url_for('basket.basket_add', id=id) }}" method="POST">
+        <p class="product-price">£{{ item_info["price_pennies"] / 100 }}</p>
+        <p class="seller-name">Seller: {{ item_info["seller_id"] }}</p>
+        <form action="{{ url_for('basket.basket_add', id=item_info["id"]) }}" method="POST">
             {% if session["user"] %}
                 <button type="submit" class="add-to-basket">Add To Basket</button>
             {% else %}
@@ -35,10 +35,10 @@
             {% endif %}
         </form>
         <p class="product-description">
-            This is a sample product description. It contains all the necessary details about the product.
+            {{ item_info["description"] }}    
         </p>
         <div class="reviews">
-            ⭐⭐⭐⭐⭐ ... Reviews
+            <p class="seller-rating">{{ '⭐' * item_info["seller_rating"]|int }}</p>
         </div>
     </div>
 </main>
