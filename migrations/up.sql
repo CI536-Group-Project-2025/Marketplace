@@ -23,17 +23,24 @@ CREATE TABLE IF NOT EXISTS usersRatings (
 );
 
 CREATE TABLE IF NOT EXISTS items (
-  item_id integer PRIMARY KEY,
+  id bigint GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   seller_id varchar(20) REFERENCES users (name),
   name varchar(50) NOT NULL,
   description varchar(300) NOT NULL,
-  price_pennies integer CHECK (price_pennies > 0) NOT NULL
+  price_pennies integer CHECK (price_pennies > 0) NOT NULL,
+  sold boolean DEFAULT false NOT NULL
 );
+
+-- Partial index. This speeds up queries on items that have been sold, 
+-- because as we scale to more users, most items in the item table will
+-- be sold.
+CREATE INDEX IF NOT EXISTS items_sold ON items (sold) WHERE sold = true;
 
 CREATE TABLE IF NOT EXISTS transactions (
   transaction_id integer PRIMARY KEY,
   seller_id varchar(20) REFERENCES users (name),
-  buyer_id varchar(20) REFERENCES users (name) CHECK (seller_id != buyer_id)
+  buyer_id varchar(20) REFERENCES users (name) CHECK (seller_id != buyer_id),
+  item_id bigint UNIQUE REFERENCES items (id)
 );
 
 CREATE TABLE IF NOT EXISTS reviews (
