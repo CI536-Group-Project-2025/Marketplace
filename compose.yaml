@@ -1,45 +1,72 @@
+version: "3.9"
+
+# ---------------------------
+# Services
+# ---------------------------
 services:
+
+  # PostgreSQL database service
   postgres:
     image: postgres:17.5-alpine
     restart: always
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
+      # Uses environment variables from .env
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: ${POSTGRES_USER}
     volumes:
+      # Initializes the database with SQL file on first run
       - ./migrations/up.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      # Maps container port 5432 to host, default from .env
+      - "${POSTGRES_PORT:-5432}:5432"
 
+  # pgAdmin 4 web interface for managing PostgreSQL
   pgadmin:
     image: dpage/pgadmin4
     environment:
-      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL:-pgadmin4@pgadmin.org}
-      - PGADMIN_DEFAULT_PASSWORD=$(PGADMIN_DEFAULT_PASSWORD:-postgres}
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+      # Optional: uncomment if you want to run in single-user mode
       # PGADMIN_CONFIG_SERVER_MODE: False
       # PGADMIN_CONFIG_MASTER_PASSWORD_REQUIRED: False
     ports:
+      # Maps pgAdmin container port 80 to host, default from .env
       - "${PGADMIN_PORT:-15432}:80"
     volumes:
+      # Persist pgAdmin data and server configuration
       - ./docker/pgAdmin/data:/var/lib/pgadmin
       - ./docker/pgAdmin/servers.json:/pgadmin4/servers.json
     depends_on:
       - postgres
     user: root
 
+  # Your marketplace app/service
   marketplace:
     build: .
     restart: always
     environment:
-      - POSTGRES_HOST=postgres
-      - DB_USER=postgres
-      - DB_PASS=postgres
+      # Connects to postgres service using env variables
+      POSTGRES_HOST: postgres
+      DB_USER: ${POSTGRES_USER}
+      DB_PASS: ${POSTGRES_PASSWORD}
     ports:
+      # Maps app port 5000 in container to 8000 on host
       - "8000:5000"
     depends_on:
       - postgres
 
-networks: 
+# ---------------------------
+# Networks
+# ---------------------------
+networks:
   marketplace_default:
     driver: bridge
 
+# ---------------------------
+# Volumes (for persistent storage)
+# ---------------------------
 volumes:
   postgres:
   pgadmin:
+
+
